@@ -21,6 +21,10 @@ body {
     font-size: 7vw;
 }
 
+#login h1 {
+    margin: 2%;
+}
+
 #login h3 {
     font-size: 2vw;
     font-weight: 400;
