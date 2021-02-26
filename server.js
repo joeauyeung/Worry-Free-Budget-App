@@ -17,6 +17,9 @@ app.use(express.static(__dirname + "/client/css"))
 
 // Setting up authentication through Google
 
+app.use(passport.initialize () );
+app.use(passport.session () );
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
@@ -24,11 +27,20 @@ passport.use(new GoogleStrategy({
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
     (accessToken, refreshToken, profile,cb) => {
-        User.findOrCreate({id: profile.id, name: profile.name.givenName}, function(err, user) {
+        User.findOrCreate({googleId: profile.id, name: profile.name.givenName}, function(err, user) {
             return cb(err, user);
         });
     }
 ));
+
+passport.serializeUser((user, cb) => {
+    cb(null, user.googleId);
+});
+passport.deserializeUser((id, done) => {
+    isSecureContext.findOne({googleId: id}, (err, user) => {
+        done(err, user);
+    });
+});
 
 app.route("/")
     .get((req, res) => {
