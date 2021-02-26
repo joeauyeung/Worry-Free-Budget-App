@@ -34,10 +34,10 @@ passport.use(new GoogleStrategy({
 ));
 
 passport.serializeUser((user, cb) => {
-    cb(null, user.googleId);
+    cb(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-    isSecureContext.findOne({googleId: id}, (err, user) => {
+    isSecureContext.findOne(id, (err, user) => {
         done(err, user);
     });
 });
@@ -55,5 +55,8 @@ app.get("/auth/google/callback",
         res.redirect("/");
     });
 
+app.get("/logout", (req, res) => {
+    res.redirect("/");
+})
 
 app.listen(process.env.PORT || 3000, () => console.log("Server running"));
